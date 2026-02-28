@@ -1325,7 +1325,13 @@
     wrap.innerHTML = "";
     const now = new Date();
     let list = sortAsc(data.events, "date");
-    if(showUpcoming) list = list.filter(e => new Date(e.date) >= now);
+    if(showUpcoming) {
+      list = list.filter(e => new Date(e.date) >= now);
+    } else {
+      const upcoming = list.filter(e => new Date(e.date) >= now);
+      const past = list.filter(e => new Date(e.date) < now).reverse();
+      list = [...upcoming, ...past];
+    }
 
     list.forEach((e)=>{
       const el = document.createElement("div");
