@@ -410,6 +410,31 @@
     @media (max-width: 760px){
       .topbar,
       .topbar .in{height:68px}
+      .topbar .in{
+        position:relative;
+        justify-content:center;
+      }
+      .brand{
+        position:static;
+        transform:translateX(-12px);
+      }
+      .brand .brand-mark{
+        position:absolute;
+        left:0;
+        top:50%;
+        transform:translateY(-50%);
+      }
+      .brand-name{
+        font-size:clamp(31px, 8.1vw, 47px);
+        line-height:1;
+        text-align:center;
+      }
+      .right{
+        position:absolute;
+        right:0;
+        top:50%;
+        transform:translateY(-50%);
+      }
       main{padding-top:68px}
       .mobile-menu{top:68px}
       .mobile-menu-backdrop{inset:68px 0 0 0}
@@ -498,7 +523,7 @@
 
     @media (max-width: 380px){
       .brand{gap:9px}
-      .brand-name{font-size:24px}
+      .brand-name{font-size:31px}
       .brand-mark{width:36px; height:36px; font-size:19px}
       .btn{padding:8px 11px; font-size:13px}
       .tag{padding:5px 8px}
