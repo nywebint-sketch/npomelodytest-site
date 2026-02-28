@@ -273,6 +273,11 @@
       width:min(520px, 90%);
       height:auto;
     }
+    .hero-main-image{
+      width:min(640px, 92%);
+      height:auto;
+      display:block;
+    }
     .heroArt .cap{
       position:relative;
       display:flex; justify-content:space-between; align-items:center;
@@ -295,10 +300,11 @@
     .hero-fullscreen .heroArt .bg,
     .hero-fullscreen .heroArt .cap{display:none}
     .hero-fullscreen .heroArt .smile{padding:0}
-    .hero-fullscreen .heroArt img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
+    .hero-fullscreen .heroArt .hero-main-image{
+      width:min(94vw, 1220px);
+      max-height:calc(100vh - 108px);
+      height:auto;
+      object-fit:contain;
     }
 
     /* Media blocks (везде одно изображение) */
@@ -383,6 +389,10 @@
       h2{font-size:clamp(18px, 5.8vw, 22px)}
       body{font-size:15px; line-height:1.45}
       .hero-fullscreen .heroArt{min-height:calc(100vh - 68px)}
+      .hero-fullscreen .heroArt .hero-main-image{
+        width:min(96vw, 980px);
+        max-height:calc(100vh - 90px);
+      }
       body::before{background-position:center center}
       #streams .head{
         flex-direction:column;
@@ -505,7 +515,18 @@
         <div class="heroArt">
           <div class="bg"></div>
           <div class="smile">
-            <img src="smile.png" alt="Изображение">
+            <img
+              class="hero-main-image"
+              src="npo_print_source.png"
+              srcset="npo_print_source_900.png 900w, npo_print_source.png 1191w"
+              sizes="100vw"
+              width="1191"
+              height="842"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              alt="НПО Мелодия"
+            >
           </div>
           <div class="cap">
             <span>SMILE SERIES 01</span>
