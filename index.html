@@ -120,6 +120,10 @@
       font-size:13px;
       white-space:nowrap;
     }
+    #streamNext{
+      max-width:100%;
+      min-width:0;
+    }
 
     /* Hero */
     .hero{padding:58px 0 36px}
@@ -260,6 +264,24 @@
       h1{font-size:clamp(30px, 9vw, 48px)}
       h2{font-size:20px}
       .hero-fullscreen .heroArt{min-height:calc(100vh - 60px)}
+      #streams .head{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      #streams .head > div{
+        width:100%;
+        min-width:0;
+      }
+      #streams .head .row{
+        width:100%;
+      }
+      #streamNext{
+        width:100%;
+        display:flex;
+        white-space:normal;
+        overflow-wrap:anywhere;
+        line-height:1.25;
+      }
     }
 
     @media (max-width: 520px){
@@ -273,6 +295,7 @@
       .calGrid{gap:6px}
       .day{min-height:72px; padding:8px}
       .pill{font-size:12px}
+      #streamNext{font-size:11px; padding:6px 9px}
     }
 
     @media (max-width: 380px){
