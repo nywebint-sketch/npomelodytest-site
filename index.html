@@ -1279,13 +1279,13 @@
       { id:"e1", title:"Maslaynitsa", date:"2026-02-19T22:00:00", place:"НПО Мелодия", tags:["live", "electronic"], status:"archive", poster:"event-maslaynitsa.jpg", about:"Ивент Maslaynitsa.", lineup:["am1d", "di-au", "feel gainsbourg", "egor popov", "nyaono"] },
       { id:"e2", title:"Cliche", date:"2026-02-20T22:00:00", place:"НПО Мелодия", tags:["club", "b2b"], status:"archive", poster:"event-cliche.jpg", about:"Ночной ивент Cliche.", lineup:["ayokiddy", "fckshizy", "luxxomea", "manyice", "norman b2b void", "whysobored", "yardyard"] },
       { id:"e3", title:"Pirate Jet", date:"2026-02-27T20:00:00", place:"НПО Мелодия", tags:["live", "concert"], status:"archive", poster:"event-pirate-jet.jpg", about:"Pirate Jet: концерты и live performance.", lineup:["gummies (concert)", "черные бояре x света ефремова (live performance)", "m1lbeee (concert)", "ucuda (concert)", "фантом м-100 (live)", "valentin fufaev", "dj baby steps", "yze (concert)", "bogdamn"] },
-      { id:"e4", title:"Проводы", date:"2026-03-07T21:00:00", place:"НПО Мелодия", tags:["live", "theatre"], status:"tickets", poster:"event-provody.jpg", about:"Ночной ивент с лайвом и театральной постановкой.", lineup:["angrykatrin", "электрическая ночь (live)", "орден мертвых (театральная постановка)", "компас врубель", "8OUSY", "мартин ландерс", "макс луч b2b time crusader", "lol123 b2b michura", "skunk york b2b wei"] },
-      { id:"e5", title:"8 Марта / Concert Day", date:"2026-03-08T17:00:00", place:"НПО Мелодия", tags:["concert", "performance"], status:"tickets", poster:"event-8-marta.jpg", about:"Специальный дневной ивент 8 марта.", lineup:["лиза голицына (concert)", "муся кроткова (concert)", "current call", "mari ka", "marina bibik", "mishinuki (concert)", "nastya tkacheva", "тая x tomashino (лаборатория речи) (live performance)", "waterwitch x soundxo (concert)", "+tba"] },
+      { id:"e4", title:"7/8 — Первый уикенд весны", date:"2026-03-07T21:30:00", place:"НПО Мелодия", tags:["weekend", "live", "32h"], status:"tickets", poster:"event-provody.jpg", ticketUrl:"https://moscow.qtickets.events/219423-78", about:"Март 7 + 8. Первый уикенд весны — 32 часа. Суббота: концерты Макса Беженова и BOORLUCK: GALLEON-25, далее Abelle, Utah, RHa & Roma Ptashenko, Caspian Kid, Wei. Утренние: Denis Kostitsyn & Rvbbt & Ballu, Sereja Borisov, A/dv. Полный анонс скоро. Двери: 21:30.", lineup:["Макс Беженов (concert)", "BOORLUCK: GALLEON-25 (concert)", "Abelle", "Utah", "RHa & Roma Ptashenko", "Caspian Kid", "Wei", "Denis Kostitsyn & Rvbbt & Ballu", "Sereja Borisov", "A/dv"] },
+      { id:"e5", title:"8 Марта — Первый уикенд весны (день 2)", date:"2026-03-08T17:00:00", place:"НПО Мелодия", tags:["weekend", "8march"], status:"tickets", poster:"event-8-marta.jpg", ticketUrl:"https://moscow.qtickets.events/219423-78", about:"Воскресенье, 8 марта. Продолжение первого уикенда весны (32 часа). Полный анонс по лайнапу — скоро.", lineup:["Line-up скоро"] },
     ],
     artists: [
       { id:"a1", name:"KIRA", role:"DJ / resident", bookable:true, tags:["techno","peak"], bio:"Резидент. Плотный техно-саунд." },
       { id:"a2", name:"NPO LIVE", role:"Live act", bookable:true, tags:["live","hardware"], bio:"Живой сет с железом." },
-      { id:"a3", name:"YUD", role:"DJ", bookable:false, tags:["house","warmup"], bio:"Варм-ап, грув, длинные дуги." },
+      { id:"a3", name:"WEI", role:"DJ / live", bookable:true, tags:["live", "octatrack"], bio:"WEI", poster:"wei.jpg" },
       { id:"a4", name:"ZED", role:"DJ / guest", bookable:true, tags:["industrial","fast"], bio:"Индастриал/фаст." },
       { id:"a5", name:"GUEST A", role:"Selector", bookable:true, tags:["breaks","leftfield"], bio:"Лефтфилд селекция." },
       { id:"a6", name:"HOST", role:"Podcast host", bookable:true, tags:["talk","curation"], bio:"Ведущий подкаста." },
@@ -1495,7 +1495,7 @@
       const el = document.createElement("div");
       el.className = "card";
       el.innerHTML = `
-        <div class="media square"><img src="smile.png" alt="" /></div>
+        <div class="media square"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
         <div class="pad">
           <div class="row sp">
             <b>${a.name}</b>
@@ -1637,7 +1637,10 @@
               <div class="divider"></div>
               <div class="row sp">
                 <span class="tag">${ev.status}</span>
-                <button class="btn primary" type="button" onclick="alert('Тут будет ссылка на билеты/регистрацию')">Билеты / регистрация</button>
+                ${ev.ticketUrl
+                  ? `<a class="btn primary" href="${ev.ticketUrl}" target="_blank" rel="noopener noreferrer">Билеты / регистрация</a>`
+                  : `<button class="btn primary" type="button" onclick="alert('Тут будет ссылка на билеты/регистрацию')">Билеты / регистрация</button>`
+                }
               </div>
             </div>
           </div>
@@ -1668,7 +1671,7 @@
         body: `
           <div class="grid g2">
             <div class="card">
-              <div class="media square"><img src="smile.png" alt="" /></div>
+              <div class="media square"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
               <div class="pad">
                 <div class="row">${a.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
                 <div class="divider"></div>
