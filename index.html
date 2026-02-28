@@ -90,8 +90,14 @@
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.02);
       display:flex; align-items:center; justify-content:center;
-      font-size:22px;
-      font-weight:500;
+      padding:7px;
+      overflow:hidden;
+    }
+    .brand-mark img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
     }
     .menu-toggle{
       color:var(--fg);
@@ -454,12 +460,14 @@
   </style>
 </head>
 
-<body>
+<body class="hero-fullscreen">
 <header class="topbar">
   <div class="container">
     <div class="in">
       <div class="brand">
-        <button class="brand-mark menu-toggle" id="mobileMenuToggle" type="button" aria-label="Открыть меню" aria-expanded="false">◎</button>
+        <button class="brand-mark menu-toggle" id="mobileMenuToggle" type="button" aria-label="Открыть меню" aria-expanded="false">
+          <img src="smile.png" alt="Логотип НПО Мелодия">
+        </button>
         <a class="brand-name" href="#home">НПО Мелодия</a>
       </div>
 
@@ -497,40 +505,16 @@
   <section class="hero" id="home">
     <div class="container">
       <div class="heroGrid">
-        <div>
-          <h1 style="margin-top:12px;">НПО Мелодия</h1>
-          <div class="row" style="margin-top:56px;">
-            <a class="btn primary" href="#events">Афиша</a>
-            <a class="btn" href="#calendar">Календарь</a>
-            <a class="btn ghost" href="#artists">Артисты</a>
-            <a class="btn ghost" href="#artists">Мерч</a>
-          </div>
-          <div class="row" style="margin-top:14px;">
-            <span class="pill" id="nextEventPill">Следующий ивент: Warehouse Night · 07.03.2026 23:00</span>
-            <span class="pill">место: Paris / test</span>
-          </div>
-          <div class="card pad quick-links">
-            <div class="title">Ссылки</div>
-            <div class="row">
-              <a class="btn" href="https://soundcloud.com/npo_radio/wei-b2b-denis-kostitsyn" target="_blank" rel="noopener noreferrer">SoundCloud</a>
-              <a class="btn" href="https://moscow.qtickets.events/216541-laboratoriya-birth-of-sound" target="_blank" rel="noopener noreferrer">Laboratoriya Birth of Sound</a>
-              <a class="btn" href="https://moscow.qtickets.events/217936-pirate-jet" target="_blank" rel="noopener noreferrer">Pirate Jet</a>
-              <a class="btn" href="https://moscow.qtickets.events/218817-temple-de-plastique-v-npo-2802" target="_blank" rel="noopener noreferrer">Temple de Plastique</a>
-              <a class="btn" href="https://moscow.qtickets.events/219423-78" target="_blank" rel="noopener noreferrer">7/8</a>
-            </div>
-          </div>
-        </div>
-
         <div class="heroArt">
           <div class="bg"></div>
           <div class="smile">
             <img
               class="hero-main-image"
-              src="npo_print_source.png"
-              srcset="npo_print_source_900.png 900w, npo_print_source.png 1191w"
+              src="smile_wall.png"
+              srcset="smile_wall_900.png 900w, smile_wall.png 1304w"
               sizes="100vw"
-              width="1191"
-              height="842"
+              width="1304"
+              height="1433"
               loading="eager"
               fetchpriority="high"
               decoding="async"
