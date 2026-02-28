@@ -297,6 +297,13 @@
       border:0;
       border-radius:0;
     }
+    .hero-fullscreen .heroArt::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,.24) 100%);
+    }
     .hero-fullscreen .heroArt .bg,
     .hero-fullscreen .heroArt .cap{display:none}
     .hero-fullscreen .heroArt .smile{padding:0}
@@ -389,9 +396,19 @@
       h2{font-size:clamp(18px, 5.8vw, 22px)}
       body{font-size:15px; line-height:1.45}
       .hero-fullscreen .heroArt{min-height:calc(100vh - 68px)}
+      .hero-fullscreen .heroArt .smile{
+        width:100%;
+        height:100%;
+      }
       .hero-fullscreen .heroArt .hero-main-image{
-        width:min(96vw, 980px);
-        max-height:calc(100vh - 90px);
+        width:100%;
+        height:100%;
+        max-height:none;
+        object-fit:cover;
+        object-position:center center;
+      }
+      .hero-fullscreen .heroArt::after{
+        background:linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.14) 46%, rgba(0,0,0,.42) 100%);
       }
       body::before{background-position:center center}
       #streams .head{
