@@ -801,7 +801,6 @@
         </div>
         <div class="row">
           <input class="input" id="artistSearch" placeholder="Поиск артиста…" style="width:min(320px, 70vw);">
-          <a class="btn primary" href="#booking">Запросить букинг</a>
         </div>
       </div>
 
@@ -865,7 +864,7 @@
         <div class="media square"><img src="smile.png" alt=""></div>
         <div class="pad">
           <div class="row sp">
-            <b>YUDIN</b>
+            <b>YUD</b>
             <span class="tag">off</span>
           </div>
           <div class="muted" style="margin-top:6px;">DJ</div>
@@ -890,34 +889,6 @@
           <button class="btn" data-open="artist" data-id="a4" type="button">Открыть</button>
         </div>
       </div></div>
-
-      <div style="height:22px"></div>
-
-      <div class="card pad" id="booking">
-        <div class="row sp">
-          <div>
-            <h2 style="font-size:18px; margin:0;">Букинг</h2>
-            <div class="sub" style="margin-top:8px;">Форма отправки заявки в админку.</div>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <form class="grid g2" id="bookingForm">
-          <div class="grid" style="gap:10px;">
-            <input class="input" id="bDate" name="date" placeholder="Дата (например 14.03.2026)" required>
-            <input class="input" id="bCity" name="city" placeholder="Город" required>
-            <input class="input" id="bVenue" name="venue" placeholder="Площадка / клуб" required>
-            <input class="input" id="bFormat" name="format" placeholder="Формат (DJ / live / hybrid)" required>
-            <input class="input" id="bContacts" name="contacts" placeholder="Контакты (telegram/email)" required>
-          </div>
-          <div class="grid" style="gap:10px;">
-            <textarea id="bNote" name="note" placeholder="Комментарий (опционально)"></textarea>
-            <button class="btn primary" id="bookingSubmit" type="submit">Отправить в админку</button>
-            <div class="muted" id="bookingStatus" style="font-size:13px;">Ожидание отправки</div>
-          </div>
-        </form>
-      </div>
 
     </div>
   </section>
@@ -1249,7 +1220,7 @@
     artists: [
       { id:"a1", name:"KIRA", role:"DJ / resident", bookable:true, tags:["techno","peak"], bio:"Резидент. Плотный техно-саунд." },
       { id:"a2", name:"NPO LIVE", role:"Live act", bookable:true, tags:["live","hardware"], bio:"Живой сет с железом." },
-      { id:"a3", name:"YUDIN", role:"DJ", bookable:false, tags:["house","warmup"], bio:"Варм-ап, грув, длинные дуги." },
+      { id:"a3", name:"YUD", role:"DJ", bookable:false, tags:["house","warmup"], bio:"Варм-ап, грув, длинные дуги." },
       { id:"a4", name:"ZED", role:"DJ / guest", bookable:true, tags:["industrial","fast"], bio:"Индастриал/фаст." },
       { id:"a5", name:"GUEST A", role:"Selector", bookable:true, tags:["breaks","leftfield"], bio:"Лефтфилд селекция." },
       { id:"a6", name:"HOST", role:"Podcast host", bookable:true, tags:["talk","curation"], bio:"Ведущий подкаста." },
@@ -1623,9 +1594,17 @@
             <div class="card pad">
               <b>Букинг</b>
               <div class="divider"></div>
-              <div class="muted">Перейди к форме и отправь запрос.</div>
-              <div style="height:12px"></div>
-              <a class="btn primary" href="#booking" onclick="document.getElementById('modal').style.display='none'; setTimeout(()=>document.querySelector('#booking').scrollIntoView({behavior:'smooth'}), 60);">К форме</a>
+              <div class="muted" style="margin-bottom:10px;">Заполни форму и отправь заявку.</div>
+              <form class="grid booking-form-modal" data-artist-id="${a.id}" data-artist-name="${a.name}" data-artist-bookable="${a.bookable ? "1" : "0"}" style="gap:10px;">
+                <input class="input" name="date" placeholder="Дата (например 14.03.2026)" required>
+                <input class="input" name="city" placeholder="Город" required>
+                <input class="input" name="venue" placeholder="Площадка / клуб" required>
+                <input class="input" name="format" placeholder="Формат (DJ / live / hybrid)" required>
+                <input class="input" name="contacts" placeholder="Контакты (telegram/email)" required>
+                <textarea name="note" placeholder="Комментарий (опционально)"></textarea>
+                <button class="btn primary" type="submit" ${a.bookable ? "" : "disabled"}>${a.bookable ? "Отправить заявку" : "Артист не на букинге"}</button>
+                <div class="muted booking-status" style="font-size:13px;">Ожидание отправки</div>
+              </form>
             </div>
           </div>
         `
@@ -1739,30 +1718,37 @@
 
   // Booking form -> admin endpoint
   const BOOKING_ADMIN_ENDPOINT = "";
-  const bookingForm = $("#bookingForm");
-  const bookingStatus = $("#bookingStatus");
-  const bookingSubmit = $("#bookingSubmit");
-  bookingForm?.addEventListener("submit", async (e)=>{
+  document.addEventListener("submit", async (e)=>{
+    const bookingForm = e.target.closest(".booking-form-modal");
+    if(!bookingForm) return;
     e.preventDefault();
+    const bookingStatus = $(".booking-status", bookingForm);
+    const bookingSubmit = bookingForm.querySelector('button[type="submit"]');
 
     if(!BOOKING_ADMIN_ENDPOINT){
-      bookingStatus.textContent = "Добавь URL админки в BOOKING_ADMIN_ENDPOINT";
+      if (bookingStatus) bookingStatus.textContent = "Добавь URL админки в BOOKING_ADMIN_ENDPOINT";
+      return;
+    }
+    if(bookingForm.dataset.artistBookable !== "1"){
+      if (bookingStatus) bookingStatus.textContent = "Этот артист сейчас не на букинге";
       return;
     }
 
     const payload = {
-      date: $("#bDate").value.trim(),
-      city: $("#bCity").value.trim(),
-      venue: $("#bVenue").value.trim(),
-      format: $("#bFormat").value.trim(),
-      contacts: $("#bContacts").value.trim(),
-      note: $("#bNote").value.trim(),
+      artistId: bookingForm.dataset.artistId || "",
+      artistName: bookingForm.dataset.artistName || "",
+      date: bookingForm.elements.date.value.trim(),
+      city: bookingForm.elements.city.value.trim(),
+      venue: bookingForm.elements.venue.value.trim(),
+      format: bookingForm.elements.format.value.trim(),
+      contacts: bookingForm.elements.contacts.value.trim(),
+      note: bookingForm.elements.note.value.trim(),
       source: "npo-melodiya-site",
       createdAt: new Date().toISOString()
     };
 
-    bookingStatus.textContent = "Отправка...";
-    bookingSubmit.disabled = true;
+    if (bookingStatus) bookingStatus.textContent = "Отправка...";
+    if (bookingSubmit) bookingSubmit.disabled = true;
 
     try{
       const res = await fetch(BOOKING_ADMIN_ENDPOINT, {
@@ -1771,13 +1757,13 @@
         body: JSON.stringify(payload)
       });
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
-      bookingStatus.textContent = "Заявка отправлена в админку";
+      if (bookingStatus) bookingStatus.textContent = "Заявка отправлена в админку";
       bookingForm.reset();
     }catch(err){
-      bookingStatus.textContent = "Ошибка отправки. Проверь URL админки.";
+      if (bookingStatus) bookingStatus.textContent = "Ошибка отправки. Проверь URL админки.";
       console.error(err);
     }finally{
-      bookingSubmit.disabled = false;
+      if (bookingSubmit) bookingSubmit.disabled = false;
     }
   });
 
