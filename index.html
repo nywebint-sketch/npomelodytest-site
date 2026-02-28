@@ -354,6 +354,12 @@
       display:block;
       opacity:.98;
     }
+    .media.cover{
+      padding:0;
+    }
+    .media.cover img{
+      object-fit:cover;
+    }
 
     /* Calendar */
     .calHead{
@@ -1495,7 +1501,7 @@
       const el = document.createElement("div");
       el.className = "card";
       el.innerHTML = `
-        <div class="media square"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
+        <div class="media square ${a.poster ? "cover" : ""}"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
         <div class="pad">
           <div class="row sp">
             <b>${a.name}</b>
@@ -1671,7 +1677,7 @@
         body: `
           <div class="grid g2">
             <div class="card">
-              <div class="media square"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
+              <div class="media square ${a.poster ? "cover" : ""}"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
               <div class="pad">
                 <div class="row">${a.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
                 <div class="divider"></div>
