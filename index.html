@@ -78,7 +78,7 @@
       display:flex; align-items:center; gap:12px;
       font-weight:700;
       letter-spacing:.02em;
-      font-size:clamp(24px, 1.4vw, 30px);
+      font-size:clamp(30px, 1.9vw, 40px);
       line-height:1;
     }
     .brand-name{
@@ -332,6 +332,8 @@
       object-fit:cover;
       object-position:center center;
       background:transparent;
+      filter:grayscale(1) contrast(0.95) brightness(0.9);
+      opacity:.58;
     }
 
     /* Media blocks (везде одно изображение) */
@@ -375,59 +377,6 @@
     .dayNum{font-size:13px; color:rgba(255,255,255,.86)}
     .dots{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px}
     .dot{width:8px; height:8px; border-radius:999px; background:rgba(255,255,255,.70)}
-
-    .cal-day-backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.62);
-      backdrop-filter:blur(4px);
-      z-index:89;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .18s ease;
-    }
-    .cal-day-sheet{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:90;
-      border-top-left-radius:18px;
-      border-top-right-radius:18px;
-      border:1px solid var(--stroke);
-      border-bottom:0;
-      background:rgba(8,8,8,.97);
-      max-height:72vh;
-      overflow:auto;
-      padding:12px 12px 16px;
-      transform:translateY(14px);
-      opacity:0;
-      pointer-events:none;
-      transition:transform .18s ease, opacity .18s ease;
-    }
-    .cal-day-sheet-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding-bottom:10px;
-      margin-bottom:10px;
-      border-bottom:1px solid var(--stroke2);
-    }
-    .cal-day-sheet-title{
-      font-size:15px;
-      font-weight:560;
-      letter-spacing:.02em;
-    }
-    body.cal-sheet-open .cal-day-backdrop{
-      opacity:1;
-      pointer-events:auto;
-    }
-    body.cal-sheet-open .cal-day-sheet{
-      transform:translateY(0);
-      opacity:1;
-      pointer-events:auto;
-    }
 
     /* Forms */
     .input, textarea{
@@ -549,7 +498,7 @@
 
     @media (max-width: 380px){
       .brand{gap:9px}
-      .brand-name{font-size:22px}
+      .brand-name{font-size:24px}
       .brand-mark{width:36px; height:36px; font-size:19px}
       .btn{padding:8px 11px; font-size:13px}
       .tag{padding:5px 8px}
@@ -883,15 +832,6 @@
       </div>
     </div>
   </section>
-
-  <div class="cal-day-backdrop" id="calDayBackdrop" hidden></div>
-  <div class="cal-day-sheet" id="calDaySheet" hidden>
-    <div class="cal-day-sheet-head">
-      <div class="cal-day-sheet-title" id="calDaySheetTitle">События</div>
-      <button class="btn" id="calDaySheetClose" type="button">Закрыть</button>
-    </div>
-    <div class="grid" id="calDaySheetBody"></div>
-  </div>
 
   <!-- ARTISTS -->
   <section id="artists">
@@ -1398,11 +1338,6 @@
   let viewY = new Date().getFullYear();
   let viewM = new Date().getMonth();
   const mobileCalendarBp = window.matchMedia("(max-width: 760px)");
-  const calDayBackdrop = $("#calDayBackdrop");
-  const calDaySheet = $("#calDaySheet");
-  const calDaySheetTitle = $("#calDaySheetTitle");
-  const calDaySheetBody = $("#calDaySheetBody");
-  const calDaySheetClose = $("#calDaySheetClose");
 
   function getEventsByDay(yy, mm, dd){
     return data.events
@@ -1432,33 +1367,6 @@
       `;
       wrap.appendChild(c);
     });
-  }
-
-  function closeCalDaySheet(){
-    document.body.classList.remove("cal-sheet-open");
-    setTimeout(()=>{
-      if(!document.body.classList.contains("cal-sheet-open")){
-        if (calDayBackdrop) calDayBackdrop.hidden = true;
-        if (calDaySheet) calDaySheet.hidden = true;
-      }
-    }, 180);
-  }
-
-  function openCalDaySheet(label, list){
-    if(!mobileCalendarBp.matches) return;
-    calDaySheetTitle.textContent = label;
-    calDaySheetBody.innerHTML = "";
-    if(!list.length){
-      const empty = document.createElement("div");
-      empty.className = "card pad muted";
-      empty.textContent = "В этот день ивентов нет";
-      calDaySheetBody.appendChild(empty);
-    }else{
-      renderDayEventsList(calDaySheetBody, list);
-    }
-    calDayBackdrop.hidden = false;
-    calDaySheet.hidden = false;
-    document.body.classList.add("cal-sheet-open");
   }
 
   function renderCal(){
@@ -1520,12 +1428,13 @@
 
     if(!list.length){
       $("#pickedDayHint").textContent = "В этот день ивентов нет";
-      openCalDaySheet(dayLabel, list);
       return;
     }
     $("#pickedDayHint").textContent = `${list.length} шт.`;
     renderDayEventsList(wrap, list);
-    openCalDaySheet(dayLabel, list);
+    if (mobileCalendarBp.matches && list[0]) {
+      openEventModal(list[0]);
+    }
   }
 
   function clearPicked(){
@@ -1536,18 +1445,13 @@
 
   $("#prevMonth").addEventListener("click", ()=>{
     viewM--; if(viewM<0){viewM=11; viewY--;}
-    renderCal(); clearPicked(); closeCalDaySheet();
+    renderCal(); clearPicked();
   });
   $("#nextMonth").addEventListener("click", ()=>{
     viewM++; if(viewM>11){viewM=0; viewY++;}
-    renderCal(); clearPicked(); closeCalDaySheet();
+    renderCal(); clearPicked();
   });
-  $("#clearPicked").addEventListener("click", ()=>{
-    clearPicked();
-    closeCalDaySheet();
-  });
-  calDayBackdrop?.addEventListener("click", closeCalDaySheet);
-  calDaySheetClose?.addEventListener("click", closeCalDaySheet);
+  $("#clearPicked").addEventListener("click", clearPicked);
 
   function renderArtists(){
     const q = ($("#artistSearch").value||"").trim().toLowerCase();
@@ -1686,22 +1590,12 @@
     $("#mBody").innerHTML = body || "";
     modal.style.display = "flex";
   };
-  const closeModal = ()=>{ modal.style.display="none"; };
-  $("#mClose").addEventListener("click", closeModal);
-  modal.addEventListener("click", (e)=>{ if(e.target === modal) closeModal(); });
-
-  document.addEventListener("click", (e)=>{
-    const b = e.target.closest("[data-open]");
-    if(!b) return;
-    const type = b.dataset.open;
-    const id = b.dataset.id;
-
-    if(type==="event"){
-      const ev = data.events.find(x=>x.id===id);
-      openModal({
-        title: ev.title,
-        sub: `${fmtDT(ev.date)} · ${ev.place}`,
-        body: `
+  const openEventModal = (ev)=>{
+    if (!ev) return;
+    openModal({
+      title: ev.title,
+      sub: `${fmtDT(ev.date)} · ${ev.place}`,
+      body: `
           <div class="grid g2">
             <div class="card">
               <div class="media"><img src="${ev.poster || "smile.png"}" alt="${ev.title}" /></div>
@@ -1724,7 +1618,21 @@
             </div>
           </div>
         `
-      });
+    });
+  };
+  const closeModal = ()=>{ modal.style.display="none"; };
+  $("#mClose").addEventListener("click", closeModal);
+  modal.addEventListener("click", (e)=>{ if(e.target === modal) closeModal(); });
+
+  document.addEventListener("click", (e)=>{
+    const b = e.target.closest("[data-open]");
+    if(!b) return;
+    const type = b.dataset.open;
+    const id = b.dataset.id;
+
+    if(type==="event"){
+      const ev = data.events.find(x=>x.id===id);
+      openEventModal(ev);
       return;
     }
 
@@ -1962,12 +1870,10 @@
   mobileLinks.forEach(link=>link.addEventListener("click", closeMobileMenu));
   window.addEventListener("resize", ()=>{
     if(!mobileBp.matches) closeMobileMenu();
-    if(!mobileCalendarBp.matches) closeCalDaySheet();
   });
   document.addEventListener("keydown", (e)=>{
     if(e.key === "Escape"){
       closeMobileMenu();
-      closeCalDaySheet();
     }
   });
 
