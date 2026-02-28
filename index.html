@@ -7,8 +7,8 @@
 
   <style>
     @font-face{
-      font-family:"SF Pro Text Custom";
-      src:url("SFProText-RegularItalic.ttf") format("truetype");
+      font-family:"ISOCP EUR Italic";
+      src:url("ISOCPEUR Italic.ttf") format("truetype");
       font-weight:400;
       font-style:normal;
       font-display:swap;
@@ -28,7 +28,7 @@
     html,body{height:100%}
     body{
       margin:0;
-      font-family: "SF Pro Text Custom", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
+      font-family: "ISOCP EUR Italic", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
       font-size:clamp(15px, 0.2vw + 14px, 17px);
       font-weight:400;
       letter-spacing:.01em;
@@ -593,7 +593,7 @@
       <div class="head">
         <div>
           <h2>Календарь</h2>
-          <div class="sub">Месячная сетка (клик по дню выводит события справа).</div>
+          <div class="sub">Месячная сетка</div>
         </div>
         <div class="row">
           <button class="btn" id="prevMonth" type="button">←</button>
@@ -897,29 +897,26 @@
         <div class="row sp">
           <div>
             <h2 style="font-size:18px; margin:0;">Букинг</h2>
-            <div class="sub" style="margin-top:8px;">Форма-заглушка. Генерит текст запроса.</div>
+            <div class="sub" style="margin-top:8px;">Форма отправки заявки в админку.</div>
           </div>
-          <button class="btn" id="copyBooking" type="button">Скопировать</button>
         </div>
 
         <div class="divider"></div>
 
-        <div class="grid g2">
+        <form class="grid g2" id="bookingForm">
           <div class="grid" style="gap:10px;">
-            <input class="input" id="bDate" placeholder="Дата (например 14.03.2026)">
-            <input class="input" id="bCity" placeholder="Город">
-            <input class="input" id="bVenue" placeholder="Площадка / клуб">
-            <input class="input" id="bFormat" placeholder="Формат (DJ / live / hybrid)">
-            <input class="input" id="bContacts" placeholder="Контакты (telegram/email)">
-            <button class="btn primary" id="genBooking" type="button">Сгенерировать</button>
+            <input class="input" id="bDate" name="date" placeholder="Дата (например 14.03.2026)" required>
+            <input class="input" id="bCity" name="city" placeholder="Город" required>
+            <input class="input" id="bVenue" name="venue" placeholder="Площадка / клуб" required>
+            <input class="input" id="bFormat" name="format" placeholder="Формат (DJ / live / hybrid)" required>
+            <input class="input" id="bContacts" name="contacts" placeholder="Контакты (telegram/email)" required>
           </div>
-          <div>
-            <textarea id="bookingText" placeholder="Нажми «Сгенерировать»"></textarea>
-            <div class="muted" style="margin-top:10px; font-size:13px;">
-              Это MVP: дальше можно отправлять в TG-бота/почту.
-            </div>
+          <div class="grid" style="gap:10px;">
+            <textarea id="bNote" name="note" placeholder="Комментарий (опционально)"></textarea>
+            <button class="btn primary" id="bookingSubmit" type="submit">Отправить в админку</button>
+            <div class="muted" id="bookingStatus" style="font-size:13px;">Ожидание отправки</div>
           </div>
-        </div>
+        </form>
       </div>
 
     </div>
@@ -931,7 +928,7 @@
       <div class="head">
         <div>
           <h2>Релизы &amp; подкасты</h2>
-          <div class="sub">Тестовые релизы и подкасты. Визуал заменен на твою картинку.</div>
+          <div class="sub">Релизы и подкасты</div>
         </div>
       </div>
 
@@ -1740,27 +1737,48 @@
     }
   });
 
-  // Booking generator
-  $("#genBooking").addEventListener("click", ()=>{
-    const txt =
-`Привет! Хочу запросить букинг.
+  // Booking form -> admin endpoint
+  const BOOKING_ADMIN_ENDPOINT = "";
+  const bookingForm = $("#bookingForm");
+  const bookingStatus = $("#bookingStatus");
+  const bookingSubmit = $("#bookingSubmit");
+  bookingForm?.addEventListener("submit", async (e)=>{
+    e.preventDefault();
 
-Дата: ${$("#bDate").value || "—"}
-Город: ${$("#bCity").value || "—"}
-Площадка: ${$("#bVenue").value || "—"}
-Формат: ${$("#bFormat").value || "—"}
+    if(!BOOKING_ADMIN_ENDPOINT){
+      bookingStatus.textContent = "Добавь URL админки в BOOKING_ADMIN_ENDPOINT";
+      return;
+    }
 
-Контакт: ${$("#bContacts").value || "—"}
+    const payload = {
+      date: $("#bDate").value.trim(),
+      city: $("#bCity").value.trim(),
+      venue: $("#bVenue").value.trim(),
+      format: $("#bFormat").value.trim(),
+      contacts: $("#bContacts").value.trim(),
+      note: $("#bNote").value.trim(),
+      source: "npo-melodiya-site",
+      createdAt: new Date().toISOString()
+    };
 
-Пришлите, пожалуйста, условия (гонорар, техрайдер, тайминг, сетап).`;
-    $("#bookingText").value = txt;
-  });
+    bookingStatus.textContent = "Отправка...";
+    bookingSubmit.disabled = true;
 
-  $("#copyBooking").addEventListener("click", async ()=>{
-    const val = $("#bookingText").value.trim();
-    if(!val){ alert("Сначала сгенерируй текст"); return; }
-    await navigator.clipboard.writeText(val);
-    alert("Скопировано");
+    try{
+      const res = await fetch(BOOKING_ADMIN_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      bookingStatus.textContent = "Заявка отправлена в админку";
+      bookingForm.reset();
+    }catch(err){
+      bookingStatus.textContent = "Ошибка отправки. Проверь URL админки.";
+      console.error(err);
+    }finally{
+      bookingSubmit.disabled = false;
+    }
   });
 
   // Nav active on scroll
