@@ -409,6 +409,7 @@
       .g4{grid-template-columns:repeat(2, minmax(0,1fr))}
       .g3{grid-template-columns:repeat(2, minmax(0,1fr))}
       .g2{grid-template-columns:1fr}
+      .calendar-picked-panel{display:none}
       section{padding:44px 0}
       .day{min-height:80px}
     }
@@ -906,7 +907,7 @@
       </div></div>
         </div>
 
-        <div class="card pad">
+        <div class="card pad calendar-picked-panel">
           <div class="row sp">
             <div>
               <b id="pickedDayLabel">Выбери день</b>
@@ -1028,17 +1029,11 @@
     <div class="container">
       <div class="head">
         <div>
-          <h2>Релизы &amp; подкасты</h2>
-          <div class="sub">Релизы и подкасты</div>
+          <h2>Релизы</h2>
         </div>
       </div>
 
       <div class="card">
-        <div class="pad">
-          <b>Релизы</b>
-          <div class="muted" style="margin-top:6px;">Сетка 4 в ряд на desktop.</div>
-        </div>
-        <div class="divider" style="margin:0;"></div>
         <div class="pad">
           <div class="grid g4" id="releasesGrid"><div class="card">
         <div class="media square"><img src="smile.png" alt=""></div>
@@ -1088,46 +1083,6 @@
         </div>
       </div>
 
-      <div style="height:14px"></div>
-
-      <div class="card">
-        <div class="pad">
-          <b>Подкасты</b>
-          <div class="muted" style="margin-top:6px;">Плеер-заглушка. Потом сюда вставится SoundCloud.</div>
-        </div>
-        <div class="divider" style="margin:0;"></div>
-        <div class="pad">
-          <div class="grid g2" id="podcastsGrid"><div class="card">
-        <div class="pad">
-          <div class="row sp">
-            <b>NPO Podcast 02: KIRA</b>
-            <span class="tag">2026-03-05</span>
-          </div>
-          <div class="muted" style="margin-top:6px;">Сет + треклист.</div>
-        </div>
-        <div class="divider" style="margin:0;"></div>
-        <div class="pad">
-          <div class="media wide"><img src="smile.png" alt=""></div>
-          <div style="height:12px"></div>
-          <button class="btn" data-open="podcast" data-id="p2" type="button">Открыть страницу</button>
-        </div>
-      </div><div class="card">
-        <div class="pad">
-          <div class="row sp">
-            <b>NPO Podcast 01: GUEST A</b>
-            <span class="tag">2026-02-18</span>
-          </div>
-          <div class="muted" style="margin-top:6px;">Разговор + сет.</div>
-        </div>
-        <div class="divider" style="margin:0;"></div>
-        <div class="pad">
-          <div class="media wide"><img src="smile.png" alt=""></div>
-          <div style="height:12px"></div>
-          <button class="btn" data-open="podcast" data-id="p1" type="button">Открыть страницу</button>
-        </div>
-      </div></div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -1440,12 +1395,14 @@
       .sort((a,b)=>new Date(a.date)-new Date(b.date));
   }
 
-  function renderDayEventsList(wrap, list){
+  function renderDayEventsList(wrap, list, options = {}){
+    const { withActions = true, withAbout = false } = options;
     wrap.innerHTML = "";
     list.forEach((e)=>{
       const c = document.createElement("div");
       c.className = "card pad";
       c.innerHTML = `
+        ${withAbout ? `<div class="media"><img src="${e.poster || "smile.png"}" alt="${e.title}" /></div>` : ``}
         <div class="row sp">
           <b>${e.title}</b>
           <span class="tag">${e.status}</span>
@@ -1454,8 +1411,8 @@
         <div class="row" style="margin-top:10px;">
           ${e.tags.map(t=>`<span class="tag">${t}</span>`).join("")}
         </div>
-        <div style="height:12px"></div>
-        <button class="btn" data-open="event" data-id="${e.id}" type="button">Подробнее</button>
+        ${withAbout ? `<div class="muted" style="margin-top:10px;">${e.about || ""}</div>` : ``}
+        ${withActions ? `<div style="height:12px"></div><button class="btn" data-open="event" data-id="${e.id}" type="button">Подробнее</button>` : ``}
       `;
       wrap.appendChild(c);
     });
@@ -1523,7 +1480,7 @@
       return;
     }
     $("#pickedDayHint").textContent = `${list.length} шт.`;
-    renderDayEventsList(wrap, list);
+    renderDayEventsList(wrap, list, { withActions:false, withAbout:true });
     if (mobileCalendarBp.matches && list[0]) {
       openEventModal(list[0]);
     }
@@ -1603,31 +1560,6 @@
           <div class="muted" style="margin-top:6px;">${r.date}</div>
           <div style="height:12px"></div>
           <button class="btn" data-open="release" data-id="${r.id}" type="button">Открыть</button>
-        </div>
-      `;
-      wrap.appendChild(el);
-    });
-  }
-
-  function renderPodcasts(){
-    const wrap = $("#podcastsGrid");
-    wrap.innerHTML = "";
-    [...data.podcasts].sort((a,b)=>b.date.localeCompare(a.date)).forEach((p)=>{
-      const el = document.createElement("div");
-      el.className = "card";
-      el.innerHTML = `
-        <div class="pad">
-          <div class="row sp">
-            <b>${p.title}</b>
-            <span class="tag">${p.date}</span>
-          </div>
-          <div class="muted" style="margin-top:6px;">${p.note}</div>
-        </div>
-        <div class="divider" style="margin:0;"></div>
-        <div class="pad">
-          <div class="media wide"><img src="smile.png" alt="" /></div>
-          <div style="height:12px"></div>
-          <button class="btn" data-open="podcast" data-id="${p.id}" type="button">Открыть страницу</button>
         </div>
       `;
       wrap.appendChild(el);
@@ -1982,7 +1914,6 @@
   renderCal();
   renderArtists();
   renderReleases();
-  renderPodcasts();
   renderStreams();
   renderMerch();
 </script>
