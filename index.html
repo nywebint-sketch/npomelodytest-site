@@ -446,6 +446,14 @@
     .media.cover img{
       object-fit:cover;
     }
+    #eventsGrid .event-media{
+      aspect-ratio:auto;
+      min-height:0;
+    }
+    #eventsGrid .event-media img{
+      height:auto;
+      object-fit:contain;
+    }
 
     /* Calendar */
     #calendar .calendar-layout{
@@ -728,6 +736,9 @@
         aspect-ratio:1/1;
         padding:6px;
       }
+      #eventsGrid .event-media{
+        aspect-ratio:auto;
+      }
       .media.wide{
         aspect-ratio:4/3;
       }
@@ -769,6 +780,9 @@
       }
       .media{
         aspect-ratio:1/1;
+      }
+      #eventsGrid .event-media{
+        aspect-ratio:auto;
       }
       .pad{
         padding:8px;
@@ -1110,19 +1124,14 @@
     }
 
     list.forEach((e)=>{
-      const eventTags = (e.tags || []).slice(0,2);
       const el = document.createElement("div");
       el.className = "card";
       el.innerHTML = `
-        <div class="media"><img src="${e.poster || "smile.png"}" alt="${e.title}" /></div>
+        <div class="media event-media">
+          <img src="${e.poster || "smile.png"}" alt="${e.title}" />
+        </div>
         <div class="pad">
-          <div class="row sp">
-            <b class="event-card-title">${e.title}</b>
-          </div>
-          <div class="muted event-card-date" style="margin-top:6px;">${fmtDT(e.date)} · ${e.place}</div>
-          <div class="event-tags">
-            ${eventTags.map(t=>`<span class="tag">${t}</span>`).join("")}
-          </div>
+          <b class="event-card-title">${e.title}</b>
         </div>
       `;
       setupOpenCard(el, "event", e.id);
