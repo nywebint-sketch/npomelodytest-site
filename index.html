@@ -186,6 +186,19 @@
     .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.18)}
     .btn.primary{background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.24)}
     .btn.ghost{background:transparent}
+    .btn.sc-btn{
+      width:42px;
+      min-width:42px;
+      height:42px;
+      padding:0;
+      border-radius:999px;
+    }
+    .sc-icon{
+      width:18px;
+      height:18px;
+      display:block;
+      fill:currentColor;
+    }
 
     main{padding-top:78px}
     section{padding:56px 0; border-bottom:1px solid rgba(255,255,255,.06)}
@@ -226,6 +239,30 @@
     }
     .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
     .sp{justify-content:space-between}
+    .event-card-title{
+      max-width:68%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .event-card-date{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .event-tags{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      flex-wrap:nowrap;
+      min-height:30px;
+    }
+    .event-tags .tag{
+      min-width:96px;
+      justify-content:center;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:7px 10px;
@@ -563,7 +600,7 @@
       .g3{grid-template-columns:1fr}
       .heroArt{min-height:360px}
       .hero-fullscreen .hero .container{padding:0}
-      .right .btn:first-child{display:none}
+      .right .afisha-btn{display:none}
       .calHead{font-size:11px}
       .calGrid{gap:6px}
       .day{min-height:52px; padding:5px}
@@ -623,7 +660,11 @@
       </nav>
 
       <div class="right">
-        <a class="btn" href="#events">Афиша</a>
+        <a class="btn sc-btn" href="https://soundcloud.com/npo_radio?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" target="_blank" rel="noopener noreferrer" aria-label="SoundCloud">
+          <svg class="sc-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3.56 11.97a.8.8 0 0 0-.8.8v4.46a.8.8 0 1 0 1.6 0v-4.46a.8.8 0 0 0-.8-.8Zm2.52-1.37a.8.8 0 0 0-.8.8v5.83a.8.8 0 0 0 1.6 0V11.4a.8.8 0 0 0-.8-.8Zm2.52-.82a.8.8 0 0 0-.8.8v6.65a.8.8 0 1 0 1.6 0v-6.65a.8.8 0 0 0-.8-.8Zm2.52.44a.8.8 0 0 0-.8.8v6.21a.8.8 0 1 0 1.6 0v-6.21a.8.8 0 0 0-.8-.8Zm2.52 1.25a.8.8 0 0 0-.8.8v4.96a.8.8 0 0 0 1.6 0v-4.96a.8.8 0 0 0-.8-.8Zm1.91 6.56h4.11a2.94 2.94 0 1 0-.34-5.86 4.88 4.88 0 0 0-9.53-.76.8.8 0 0 0 1.49.58 3.28 3.28 0 0 1 6.36.84v.18a.8.8 0 0 0 .96.78c.18-.03.35-.05.52-.05a1.34 1.34 0 1 1 0 2.68h-4.11a.8.8 0 1 0 0 1.6Z"/>
+          </svg>
+        </a>
         <a class="btn primary" href="#streams">Live</a>
       </div>
     </div>
@@ -1346,18 +1387,20 @@
     }
 
     list.forEach((e)=>{
+      const primaryTag = (e.tags && e.tags[0]) ? e.tags[0] : e.status;
+      const secondaryTag = (e.tags && e.tags[1]) ? e.tags[1] : e.status;
       const el = document.createElement("div");
       el.className = "card";
       el.innerHTML = `
         <div class="media"><img src="${e.poster || "smile.png"}" alt="${e.title}" /></div>
         <div class="pad">
           <div class="row sp">
-            <b>${e.title}</b>
+            <b class="event-card-title">${e.title}</b>
             <span class="tag">${e.status}</span>
           </div>
-          <div class="muted" style="margin-top:6px;">${fmtDT(e.date)} · ${e.place}</div>
-          <div class="row" style="margin-top:10px;">
-            ${e.tags.map(t=>`<span class="tag">${t}</span>`).join("")}
+          <div class="muted event-card-date" style="margin-top:6px;">${fmtDT(e.date)} · ${e.place}</div>
+          <div class="event-tags">
+            <span class="tag">${primaryTag}</span><span class="tag">${secondaryTag}</span>
           </div>
           <div style="height:12px"></div>
           <button class="btn" data-open="event" data-id="${e.id}" type="button">Подробнее</button>
