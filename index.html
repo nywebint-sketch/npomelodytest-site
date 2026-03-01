@@ -92,6 +92,10 @@
       white-space:nowrap;
       font-size:clamp(31px, 8.1vw, 47px);
       line-height:1;
+      text-align:left;
+      display:block;
+      position:relative;
+      top:3px;
     }
     .brand-mark{
       width:42px; height:42px; border-radius:13px;
@@ -591,10 +595,12 @@
       .topbar .in{
         position:relative;
         justify-content:flex-start;
+        align-items:center;
       }
       .brand{
         position:static;
         gap:8px;
+        align-items:center;
       }
       .brand .brand-mark{
         position:static;
@@ -602,12 +608,15 @@
         width:38px;
         height:38px;
         padding:0;
-        border:0;
-        background:transparent;
-        overflow:visible;
+        border:1px solid var(--stroke);
+        border-radius:13px;
+        background:rgba(255,255,255,.02);
+        overflow:hidden;
+      }
+      .brand .brand-mark img{
+        object-fit:cover;
       }
       .brand-name{
-        text-align:left;
         transform:none;
       }
       .right{
@@ -884,9 +893,6 @@
           <h2>Артисты &amp; букинг</h2>
           <div class="sub">тестовый каталог</div>
         </div>
-        <div class="row">
-          <input class="input" id="artistSearch" placeholder="Поиск артиста…" style="width:min(320px, 70vw);">
-        </div>
       </div>
 
       <div class="card">
@@ -995,19 +1001,6 @@
             <a class="btn" href="#" onclick="alert(&#39;Поставь ссылку&#39;); return false;">Telegram</a>
             <a class="btn" href="#" onclick="alert(&#39;Поставь ссылку&#39;); return false;">Instagram</a>
             <a class="btn" href="#" onclick="alert(&#39;Поставь ссылку&#39;); return false;">SoundCloud</a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="pad">
-            <div class="row sp">
-              <b>Карта</b>
-              <span class="tag">placeholder</span>
-            </div>
-          </div>
-          <div class="divider" style="margin:0;"></div>
-          <div class="pad">
-            <div class="media wide"><img src="smile.png" alt=""></div>
           </div>
         </div>
       </div>
@@ -1293,7 +1286,8 @@
   $("#clearPicked").addEventListener("click", clearPicked);
 
   function renderArtists(){
-    const q = ($("#artistSearch").value||"").trim().toLowerCase();
+    const searchEl = $("#artistSearch");
+    const q = ((searchEl && searchEl.value) || "").trim().toLowerCase();
     const wrap = $("#artistsGrid");
     wrap.innerHTML = "";
     const artistLimit = 6;
@@ -1316,7 +1310,7 @@
       const el = document.createElement("div");
       el.className = "card";
       el.innerHTML = `
-        <div class="media square"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
+        <div class="media square ${a.id === "a3" ? "cover" : ""}"><img src="${a.poster || "smile.png"}" alt="${a.name}" /></div>
         <div class="pad">
           <b class="artist-name">${a.name}</b>
         </div>
@@ -1325,8 +1319,6 @@
       wrap.appendChild(el);
     });
   }
-
-  $("#artistSearch").addEventListener("input", renderArtists);
 
   function renderReleases(){
     const wrap = $("#releasesGrid");
