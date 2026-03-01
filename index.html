@@ -486,6 +486,9 @@
       gap:12px;
       min-height:100%;
     }
+    #calendar .calendar-picked-panel > .row.sp{
+      display:none;
+    }
     #calendar .picked-events-wrap{
       flex:1;
     }
@@ -506,44 +509,47 @@
       border-radius:14px;
       background:rgba(255,255,255,.02);
       overflow:hidden;
+      display:block;
     }
     #calendar .picked-event-media{
       width:100%;
       aspect-ratio:16/10;
       background:rgba(255,255,255,.03);
       border-bottom:1px solid var(--stroke2);
-      padding:8px;
+      padding:6px;
     }
     #calendar .picked-event-media img{
       width:100%;
       height:100%;
       object-fit:cover;
-      border-radius:10px;
+      border-radius:8px;
       display:block;
     }
     #calendar .picked-event-body{
-      padding:12px;
+      padding:10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
     }
     #calendar .picked-event-title{
-      font-size:18px;
+      font-size:16px;
       line-height:1.2;
       display:block;
     }
     #calendar .picked-event-date{
-      margin-top:6px;
       font-size:13px;
-    }
-    #calendar .picked-event-tags{
-      margin-top:10px;
-      gap:8px;
     }
     #calendar .picked-event-about{
-      margin-top:10px;
       font-size:13px;
-      line-height:1.45;
+      line-height:1.35;
+    }
+    #calendar .picked-event-lineup{
+      font-size:12px;
+      line-height:1.35;
+      max-height:4.1em;
+      overflow:hidden;
     }
     #calendar .picked-event-more{
-      margin-top:10px;
       font-size:12px;
       color:var(--muted);
     }
@@ -1185,7 +1191,9 @@
 
     const e = list[0];
     const moreCount = list.length - 1;
-    const tags = (e.tags || []).slice(0, 3);
+    const lineup = e.lineup || [];
+    const lineupPreview = lineup.slice(0, 4).join(", ");
+    const lineupTail = lineup.length > 4 ? ` +${lineup.length - 4}` : "";
 
     const card = document.createElement("article");
     card.className = "picked-event-card";
@@ -1194,8 +1202,8 @@
       <div class="picked-event-body">
         <b class="picked-event-title">${e.title}</b>
         <div class="muted picked-event-date">${fmtDT(e.date)} · ${e.place}</div>
-        <div class="row picked-event-tags">${tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
         ${e.about ? `<div class="muted picked-event-about">${e.about}</div>` : ``}
+        ${lineup.length ? `<div class="muted picked-event-lineup"><b>Лайнап:</b> ${lineupPreview}${lineupTail}</div>` : ``}
         ${moreCount > 0 ? `<div class="picked-event-more">+ ещё ${moreCount} событие(й) в этот день</div>` : ``}
       </div>
     `;
